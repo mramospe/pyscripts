@@ -14,11 +14,14 @@ import itertools
 import multiprocessing
 import os
 
+# Default size of the pool to get the dependencies
+__pool_size__ = 4
+
 
 __all__ = ['all_dependencies', 'dependencies']
 
 
-def all_dependencies( pyfile, pkg_name, abspath = False, pool_size = 4 ):
+def all_dependencies( pyfile, pkg_name, abspath = False, pool_size = __pool_size__ ):
     '''
     Return the dependencies on a package for a given python file.
     Dependencies are acquired on a different process, so it does
@@ -36,6 +39,8 @@ def all_dependencies( pyfile, pkg_name, abspath = False, pool_size = 4 ):
     :returns: list with the paths to the files whom the provided file \
     depends on.
     :rtype: list(str)
+
+    .. seealso:: :func:`dependencies`
     '''
     parent, child = multiprocessing.Pipe()
 
@@ -103,6 +108,8 @@ def dependencies( pyfile, pkg_name, abspath = False ):
     :param abspath: bool
     :returns: list with the paths to the dependencies.
     :rtype: list(str)
+
+    .. seealso:: :func:`all_dependencies`
     '''
     deps = []
 

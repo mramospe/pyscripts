@@ -19,7 +19,7 @@ Main points
 
 The idea behind this package is to provide a way to execute python scripts which
 make use of pakages which handle command line arguments, like
-`argparse <https://docs.python.org/3/library/argparse.html`_.
+`argparse <https://docs.python.org/3/library/argparse.html>`_.
 It is also suggested to use it in combination with
 `snakemake <https://snakemake.readthedocs.io/en/stable/>`_,
 which would allow analysts to create fully reproducible analysis.

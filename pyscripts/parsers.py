@@ -26,6 +26,8 @@ def call( args, drop = None, call_name = __callable_name__ ):
     :param call_name: name of the callable in the arguments.
     :type call_name: str
     :returns: whatever is returned in the callable call.
+
+    .. seealso:: :func:`process_args`
     '''
     dct = process_args(args, drop, call_name)
 
@@ -101,6 +103,8 @@ def process_args( args, drop = None, call_name = __callable_name__ ):
     :type call_name: str
     :returns: dictionary with the remaining values.
     :rtype: dict
+
+    .. seealso:: :func:`call`
     '''
     dct = dict(vars(args))
 
