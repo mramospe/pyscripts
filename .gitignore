@@ -60,3 +60,4 @@ pyscripts/version.py
 ###############
 *.txt
 .pytest_cache
+dist

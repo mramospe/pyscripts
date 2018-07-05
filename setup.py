@@ -18,7 +18,7 @@ from setuptools import setup, find_packages, Extension
 # for the fourth tag are "dev", "alpha", "beta",
 # "cand", "final" or "post".
 #
-version_info = (0, 0, 0, 'dev', 0)
+version_info = (0, 0, 0, 'dev', 1)
 
 tag = version_info[3]
 
@@ -102,8 +102,7 @@ def setup_package():
 
         version = version,
 
-        description = 'Provides statistical and plotting tools using general '\
-        'python packages, focused to High Energy Physics.',
+        description = 'Tools to work with python scripts',
 
         # Read the long description from the README
         long_description = open('README.rst').read(),
