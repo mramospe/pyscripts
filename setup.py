@@ -18,7 +18,7 @@ from setuptools import setup, find_packages, Extension
 # for the fourth tag are "dev", "alpha", "beta",
 # "cand", "final" or "post".
 #
-version_info = (0, 0, 0, 'dev', 2)
+version_info = (0, 0, 0, 'dev', 3)
 
 tag = version_info[3]
 
