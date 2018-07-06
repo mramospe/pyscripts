@@ -8,13 +8,44 @@ __email__   = ['miguel.ramos.pernas@cern.ch']
 
 
 # Python
+import ctypes
+import functools
 import io
+import os
+import sys
+import tempfile
 from contextlib import contextmanager
+
 
 __all__ = ['stdout_redirector']
 
 
-@contextmanager
+def decorate( deco ):
+    '''
+    Decorate using the given function, preserving the docstring.
+
+    :param deco: decorator.
+    :type deco: function
+    :returns: function used to decorate.
+    :rtype: function
+    '''
+    def _wrapper( f ):
+        '''
+        Wrap the decorator.
+        '''
+        @functools.wraps(f)
+        def __wrapper( *args, **kwargs ):
+            '''
+            Inner wrapper which actually calls the function.
+            '''
+            return deco(f)(*args, **kwargs)
+
+        return __wrapper
+
+    return _wrapper
+
+
+@decorate(contextmanager)
 def stdout_redirector( stream = None ):
     '''
     Redirect stdout to the given stream.
@@ -23,15 +54,17 @@ def stdout_redirector( stream = None ):
     >>> with stdout_redirector() as out:
     >>>     # whatever is printed here will go to "out"
     >>>     print('Hello')
-    >>>     out.seek(0)
-    >>>     captured = out.read()
+    >>> out.seek(0)
+    >>> captured = out.read()
     >>> print(captured)
-    Hello
+    b'Hello'
+
+    By default, it returns an :class:`io.BytesIO` object.
 
     :param stream: object to collect the output stream.
     :type stream: file
-    :returns: output stream (io.BytesIO by default).
-    :rtype: file
+    :returns: output stream (:class:`io.BytesIO` by default).
+    :rtype: io.BytesIO or file
     '''
     stream = stream if stream is not None else io.BytesIO()
 

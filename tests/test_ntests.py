@@ -17,7 +17,7 @@ import os
 import pyscripts
 
 # Modules to exclude from having tests
-EXCLUDE_MODULES = {'core', 'cpython', 'version'}
+EXCLUDE_MODULES = {'version'}
 
 
 def test_all_modules_have_tests():

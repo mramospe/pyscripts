@@ -9,3 +9,7 @@ account the following considerations:
 
  - You can write any new test script without needing to refer explicitely to
    a module.
+
+ - Beware of the behaviour of the "pyscipts.stdout_redirector" function, which
+   interferes with "pytest". If a function makes use of it, include it in a script
+   and run it with "subprocess". The scripts must be placed under "scripts/".

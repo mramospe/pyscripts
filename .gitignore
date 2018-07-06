@@ -58,6 +58,5 @@ pyscripts/version.py
 
 # Other files #
 ###############
-*.txt
 .pytest_cache
 dist

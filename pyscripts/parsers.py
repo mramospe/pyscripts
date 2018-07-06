@@ -42,7 +42,7 @@ def define_modes( parser, modes, call_name = __callable_name__, defaults = None,
     is taken directly from their docstrings.
     One can retrieve the single parser (per callable) as:
 
-    >>> parser = argparser.ArgumentParser()
+    >>> parser = argparse.ArgumentParser()
     >>> subparsers = make_subparsers(parser, [func_1, func2])
     >>> parser_func_1 = subparsers.choices['func_1']
     >>> parser_func_2 = subparsers.choices['func_2']
@@ -50,12 +50,12 @@ def define_modes( parser, modes, call_name = __callable_name__, defaults = None,
     By default, "func" will be the name associated to the callable execution,
     so after typing
 
-    >>> parser = argparser.ArgumentParser()
+    >>> parser = argparse.ArgumentParser()
     >>> make_subparsers(parser, [func_1, func2])
     >>> args = parser.parse_args()
 
     then "args.func" will be the callable to call (func_1 or func_2, in this
-    case). The name of this attribute can be changed via the "arg_mode".
+    case). The name of this attribute can be changed via "arg_mode".
 
     :param parser: parser where to add the subparsers.
     :type parser: argparse.ArgumentParser
@@ -74,6 +74,8 @@ def define_modes( parser, modes, call_name = __callable_name__, defaults = None,
     :rtype: argparse._SubParsersAction
     '''
     subparsers = parser.add_subparsers()
+
+    defaults = defaults if defaults is not None else {}
 
     for m in modes:
         p = subparsers.add_parser(m.__name__, help=m.__doc__)

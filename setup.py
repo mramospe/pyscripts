@@ -18,7 +18,7 @@ from setuptools import setup, find_packages, Extension
 # for the fourth tag are "dev", "alpha", "beta",
 # "cand", "final" or "post".
 #
-version_info = (0, 0, 0, 'dev', 1)
+version_info = (0, 0, 0, 'dev', 2)
 
 tag = version_info[3]
 
@@ -37,23 +37,6 @@ if tag != 'final':
         raise ValueError('Unable to parse version information')
 
 version = frmt.format('.'.join(map(str, version_info[:3])), version_info[4])
-
-
-def cpython_module( directory ):
-    '''
-    Determine the CPython modules available on the given directory
-    '''
-    extensions = []
-    for path, _, fnames in os.walk(directory):
-        for f in filter(lambda s: s.endswith('.c'), fnames):
-
-            full_path = os.path.join(path, f)
-
-            ext = Extension(full_path[:-2].replace('/', '.'), [full_path])
-
-            extensions.append(ext)
-
-    return extensions
 
 
 def create_version_file():
