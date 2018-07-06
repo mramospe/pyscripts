@@ -45,7 +45,7 @@
 <h1>stdout_redirector<a class="headerlink" href="#stdout-redirector" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="pyscripts.stdout_redirector">
-<code class="descclassname">pyscripts.</code><code class="descname">stdout_redirector</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscripts/display.html#stdout_redirector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscripts.stdout_redirector" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">pyscripts.</code><code class="descname">stdout_redirector</code><span class="sig-paren">(</span><em>stream=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscripts/display.html#stdout_redirector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscripts.stdout_redirector" title="Permalink to this definition">¶</a></dt>
 <dd><p>Redirect stdout to the given stream.
 The call to this function opens a new context, so you can write:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">stdout_redirector</span><span class="p">()</span> <span class="k">as</span> <span class="n">out</span><span class="p">:</span>
@@ -57,16 +57,16 @@ The call to this function opens a new context, so you can write:</p>
 <span class="go">b&#39;Hello&#39;</span>
 </pre></div>
 </div>
-<p>beware that the output might be a byte string.</p>
+<p>By default, it returns an <a class="reference external" href="https://docs.python.org/3/library/io.html#io.BytesIO" title="(in Python v3.7)"><code class="xref py py-class docutils literal"><span class="pre">io.BytesIO</span></code></a> object.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>stream</strong> (<em>file</em>) – object to collect the output stream.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">output stream (io.BytesIO by default).</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">output stream (<a class="reference external" href="https://docs.python.org/3/library/io.html#io.BytesIO" title="(in Python v3.7)"><code class="xref py py-class docutils literal"><span class="pre">io.BytesIO</span></code></a> by default).</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">file</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/io.html#io.BytesIO" title="(in Python v3.7)">io.BytesIO</a> or file</td>
 </tr>
 </tbody>
 </table>

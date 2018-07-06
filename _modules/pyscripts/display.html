@@ -51,16 +51,43 @@
 
 <span class="c1"># Python</span>
 <span class="kn">import</span> <span class="nn">ctypes</span>
+<span class="kn">import</span> <span class="nn">functools</span>
 <span class="kn">import</span> <span class="nn">io</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">tempfile</span>
 <span class="kn">from</span> <span class="nn">contextlib</span> <span class="k">import</span> <span class="n">contextmanager</span>
 
+
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;stdout_redirector&#39;</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="stdout_redirector"><a class="viewcode-back" href="../../api/pyscripts.stdout_redirector.html#pyscripts.stdout_redirector">[docs]</a><span class="nd">@contextmanager</span>
+<span class="k">def</span> <span class="nf">decorate</span><span class="p">(</span> <span class="n">deco</span> <span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Decorate using the given function, preserving the docstring.</span>
+
+<span class="sd">    :param deco: decorator.</span>
+<span class="sd">    :type deco: function</span>
+<span class="sd">    :returns: function used to decorate.</span>
+<span class="sd">    :rtype: function</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="nf">_wrapper</span><span class="p">(</span> <span class="n">f</span> <span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Wrap the decorator.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">__wrapper</span><span class="p">(</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span> <span class="p">):</span>
+            <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">            Inner wrapper which actually calls the function.</span>
+<span class="sd">            &#39;&#39;&#39;</span>
+            <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">__wrapper</span>
+
+    <span class="k">return</span> <span class="n">_wrapper</span>
+
+
+<div class="viewcode-block" id="stdout_redirector"><a class="viewcode-back" href="../../api/pyscripts.stdout_redirector.html#pyscripts.stdout_redirector">[docs]</a><span class="nd">@decorate</span><span class="p">(</span><span class="n">contextmanager</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">stdout_redirector</span><span class="p">(</span> <span class="n">stream</span> <span class="o">=</span> <span class="kc">None</span> <span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Redirect stdout to the given stream.</span>
@@ -74,12 +101,12 @@
 <span class="sd">    &gt;&gt;&gt; print(captured)</span>
 <span class="sd">    b&#39;Hello&#39;</span>
 
-<span class="sd">    beware that the output might be a byte string.</span>
+<span class="sd">    By default, it returns an :class:`io.BytesIO` object.</span>
 
 <span class="sd">    :param stream: object to collect the output stream.</span>
 <span class="sd">    :type stream: file</span>
-<span class="sd">    :returns: output stream (io.BytesIO by default).</span>
-<span class="sd">    :rtype: file</span>
+<span class="sd">    :returns: output stream (:class:`io.BytesIO` by default).</span>
+<span class="sd">    :rtype: io.BytesIO or file</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">stream</span> <span class="o">=</span> <span class="n">stream</span> <span class="k">if</span> <span class="n">stream</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">()</span>
 

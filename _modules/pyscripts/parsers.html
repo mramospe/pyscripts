@@ -84,7 +84,7 @@
 <span class="sd">    is taken directly from their docstrings.</span>
 <span class="sd">    One can retrieve the single parser (per callable) as:</span>
 
-<span class="sd">    &gt;&gt;&gt; parser = argparser.ArgumentParser()</span>
+<span class="sd">    &gt;&gt;&gt; parser = argparse.ArgumentParser()</span>
 <span class="sd">    &gt;&gt;&gt; subparsers = make_subparsers(parser, [func_1, func2])</span>
 <span class="sd">    &gt;&gt;&gt; parser_func_1 = subparsers.choices[&#39;func_1&#39;]</span>
 <span class="sd">    &gt;&gt;&gt; parser_func_2 = subparsers.choices[&#39;func_2&#39;]</span>
@@ -92,12 +92,12 @@
 <span class="sd">    By default, &quot;func&quot; will be the name associated to the callable execution,</span>
 <span class="sd">    so after typing</span>
 
-<span class="sd">    &gt;&gt;&gt; parser = argparser.ArgumentParser()</span>
+<span class="sd">    &gt;&gt;&gt; parser = argparse.ArgumentParser()</span>
 <span class="sd">    &gt;&gt;&gt; make_subparsers(parser, [func_1, func2])</span>
 <span class="sd">    &gt;&gt;&gt; args = parser.parse_args()</span>
 
 <span class="sd">    then &quot;args.func&quot; will be the callable to call (func_1 or func_2, in this</span>
-<span class="sd">    case). The name of this attribute can be changed via the &quot;arg_mode&quot;.</span>
+<span class="sd">    case). The name of this attribute can be changed via &quot;arg_mode&quot;.</span>
 
 <span class="sd">    :param parser: parser where to add the subparsers.</span>
 <span class="sd">    :type parser: argparse.ArgumentParser</span>
