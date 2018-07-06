@@ -1,0 +1,6 @@
+dependencies
+============
+
+.. currentmodule:: pyscripts
+
+.. autofunction:: dependencies

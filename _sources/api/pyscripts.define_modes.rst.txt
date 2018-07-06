@@ -1,0 +1,6 @@
+define_modes
+============
+
+.. currentmodule:: pyscripts
+
+.. autofunction:: define_modes

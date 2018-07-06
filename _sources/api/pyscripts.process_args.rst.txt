@@ -1,0 +1,6 @@
+process_args
+============
+
+.. currentmodule:: pyscripts
+
+.. autofunction:: process_args

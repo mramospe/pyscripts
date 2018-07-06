@@ -1,0 +1,6 @@
+direct_dependencies
+===================
+
+.. currentmodule:: pyscripts
+
+.. autofunction:: direct_dependencies

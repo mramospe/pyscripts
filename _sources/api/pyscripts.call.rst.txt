@@ -1,0 +1,6 @@
+call
+====
+
+.. currentmodule:: pyscripts
+
+.. autofunction:: call

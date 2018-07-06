@@ -1,0 +1,6 @@
+stdout_redirector
+=================
+
+.. currentmodule:: pyscripts
+
+.. autofunction:: stdout_redirector
