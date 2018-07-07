@@ -63,11 +63,13 @@ def test_process_args():
 
     args = parser.parse_args('mode_1 --test --entries 100'.split())
 
-    dct = pyscripts.process_args(args)
+    func, nm = pyscripts.process_args(args)
+
+    dct = vars(nm)
 
     assert dct['test'] == True
     assert dct['entries'] == 100
     assert dct['main_arg'] == False
     assert pyscripts.parsers.__callable_name__ not in dct
 
-    assert getattr(args, pyscripts.parsers.__callable_name__)(**dct) == 1
+    assert func(nm) == 1

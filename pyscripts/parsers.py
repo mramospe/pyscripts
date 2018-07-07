@@ -5,6 +5,8 @@ Define utils to parse arguments in the scripts.
 __author__  = ['Miguel Ramos Pernas']
 __email__   = ['miguel.ramos.pernas@cern.ch']
 
+# Python
+import argparse
 
 # Default name of the callable in the attributes of the Namespace
 # obtained after processing the arguments.
@@ -29,9 +31,9 @@ def call( args, drop = None, call_name = __callable_name__ ):
 
     .. seealso:: :func:`process_args`
     '''
-    dct = process_args(args, drop, call_name)
+    func, nm = process_args(args, drop, call_name)
 
-    return getattr(args, call_name)(**dct)
+    return func(nm)
 
 
 def define_modes( parser, modes, call_name = __callable_name__, defaults = None, apply_to_parsers = None ):
@@ -55,7 +57,13 @@ def define_modes( parser, modes, call_name = __callable_name__, defaults = None,
     >>> args = parser.parse_args()
 
     then "args.func" will be the callable to call (func_1 or func_2, in this
-    case). The name of this attribute can be changed via "arg_mode".
+    case).
+    The name of this attribute can be changed via "arg_mode".
+    The stored function is not directly "func_1" or "func_2", but a simple
+    wrapper around these functions which allows to give an instance of
+    argparse.Namespace as the only argument.
+    The wrapper will transform it into a dictionary, expanding its values and
+    passing them to the desired functions.
 
     :param parser: parser where to add the subparsers.
     :type parser: argparse.ArgumentParser
@@ -80,7 +88,7 @@ def define_modes( parser, modes, call_name = __callable_name__, defaults = None,
     for m in modes:
         p = subparsers.add_parser(m.__name__, help=m.__doc__)
 
-        defaults[call_name] = m
+        defaults[call_name] = _transforming_namespace_to_dict(m)
 
         if apply_to_parsers is not None:
             apply_to_parsers(p)
@@ -95,7 +103,8 @@ def process_args( args, drop = None, call_name = __callable_name__ ):
     Process the arguments obtained by
     :meth:`argparse.ArgumentParser.parse_args`, dropping from its values
     everything specified in "drop" and "call_name".
-    A dictionary is returned instead.
+    A new argparse.Namespace instance is created and returned, together with
+    the function to be called..
 
     :param args: arguments obtained from the parser.
     :type args: argparse.Namespace
@@ -103,8 +112,8 @@ def process_args( args, drop = None, call_name = __callable_name__ ):
     :type drop: list(str) or None
     :param call_name: name of the callable in the arguments.
     :type call_name: str
-    :returns: dictionary with the remaining values.
-    :rtype: dict
+    :returns: function to execute and namespace holding the remaining values.
+    :rtype: function, argparse.Namespace
 
     .. seealso:: :func:`call`
     '''
@@ -114,6 +123,29 @@ def process_args( args, drop = None, call_name = __callable_name__ ):
         for d in drop:
             dct.pop(d)
 
-    dct.pop(call_name)
+    func = dct.pop(call_name)
 
-    return dct
+    nm = argparse.Namespace(**dct)
+
+    return func, nm
+
+
+def _transforming_namespace_to_dict( f ):
+    '''
+    Decorator which will return a function expecting an instance of the
+    argparse.Namespace class.
+    This instance will be parsed to extract its values to a dictionary,
+    which is afterwards expanded and passed to the input function.
+
+    :param f: function to decorate.
+    :type f: function
+    :returns: decorated function.
+    :rtype: function
+    '''
+    def _wrapper( args ):
+        '''
+        Internal wrapper.
+        '''
+        return f(**vars(args))
+
+    return _wrapper
