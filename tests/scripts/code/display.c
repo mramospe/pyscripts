@@ -10,5 +10,5 @@
 /// Display the input message
 void display( char const* msg )
 {
-  printf(msg);
+  printf("%s", msg);
 }

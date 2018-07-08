@@ -16,7 +16,7 @@ import multiprocessing
 import os
 
 # Local
-from pyscripts.display import stdout_redirector
+from pyscripts.display import redirect_stdstream
 
 # Default size of the pool to get the dependencies
 __pool_size__ = 4
@@ -96,7 +96,7 @@ def direct_dependencies( pyfile, pkg_name, abspath = False ):
     '''
     deps = set()
 
-    with stdout_redirector():
+    with redirect_stdstream():
 
         # Load the dependencies of the pyfile with the modules
         spec = importlib.util.spec_from_file_location("", pyfile)
