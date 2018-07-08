@@ -5,13 +5,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>dependencies &#8212; pyscripts 0.0.0.dev1 documentation</title>
+    <title>dependencies &#8212; pyscripts 0.0.0.dev3 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.0.0.dev1',
+        VERSION:     '0.0.0.dev3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -48,7 +48,8 @@
 <code class="descclassname">pyscripts.</code><code class="descname">dependencies</code><span class="sig-paren">(</span><em>pyfile</em>, <em>pkg_name</em>, <em>abspath=False</em>, <em>pool_size=4</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscripts/deps.html#dependencies"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscripts.dependencies" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the dependencies on a package for a given python file.
 Dependencies are acquired on a different process, so it does
-not interfere with this stack.</p>
+not interfere with this stack.
+The package must be importable from the current environment.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />

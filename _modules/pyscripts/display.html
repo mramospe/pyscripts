@@ -5,13 +5,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>pyscripts.display &#8212; pyscripts 0.0.0.dev1 documentation</title>
+    <title>pyscripts.display &#8212; pyscripts 0.0.0.dev3 documentation</title>
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.0.0.dev1',
+        VERSION:     '0.0.0.dev3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -59,7 +59,7 @@
 <span class="kn">from</span> <span class="nn">contextlib</span> <span class="k">import</span> <span class="n">contextmanager</span>
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;stdout_redirector&#39;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;redirect_stdstream&#39;</span><span class="p">]</span>
 
 
 <span class="k">def</span> <span class="nf">decorate</span><span class="p">(</span> <span class="n">deco</span> <span class="p">):</span>
@@ -80,79 +80,154 @@
             <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">            Inner wrapper which actually calls the function.</span>
 <span class="sd">            &#39;&#39;&#39;</span>
-            <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">deco</span><span class="p">(</span><span class="n">f</span><span class="p">)(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">__wrapper</span>
 
     <span class="k">return</span> <span class="n">_wrapper</span>
 
 
-<div class="viewcode-block" id="stdout_redirector"><a class="viewcode-back" href="../../api/pyscripts.stdout_redirector.html#pyscripts.stdout_redirector">[docs]</a><span class="nd">@decorate</span><span class="p">(</span><span class="n">contextmanager</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">stdout_redirector</span><span class="p">(</span> <span class="n">stream</span> <span class="o">=</span> <span class="kc">None</span> <span class="p">):</span>
+<div class="viewcode-block" id="redirect_stdstream"><a class="viewcode-back" href="../../api/pyscripts.redirect_stdstream.html#pyscripts.redirect_stdstream">[docs]</a><span class="nd">@decorate</span><span class="p">(</span><span class="n">contextmanager</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">redirect_stdstream</span><span class="p">(</span> <span class="n">istream</span> <span class="o">=</span> <span class="s1">&#39;stdout&#39;</span><span class="p">,</span> <span class="n">ostream</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">stream_type</span> <span class="o">=</span> <span class="s1">&#39;t&#39;</span> <span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    Redirect stdout to the given stream.</span>
+<span class="sd">    Redirect the information going to &quot;istream&quot; to the given stream.</span>
+
+<span class="sd">    :param istream: where to redirect the output from. It can be any of \</span>
+<span class="sd">    &quot;stdout&quot; or &quot;stderr&quot;.</span>
+<span class="sd">    :type istream: str</span>
+<span class="sd">    :param ostream: object to collect the output stream.</span>
+<span class="sd">    :type ostream: file</span>
+<span class="sd">    :param stream_type: type of stream. &#39;b&#39; if it works with byte objects or \</span>
+<span class="sd">    &#39;t&#39; if it does it with strings.</span>
+<span class="sd">    :type stream_type: str</span>
+<span class="sd">    :returns: output stream (:class:`io.StringIO` by default).</span>
+<span class="sd">    :rtype: io.StringIO or file</span>
+<span class="sd">    :raises ValueError: if an incorrect input stream name or type is provided.</span>
+
 <span class="sd">    The call to this function opens a new context, so you can write:</span>
 
-<span class="sd">    &gt;&gt;&gt; with stdout_redirector() as out:</span>
-<span class="sd">    &gt;&gt;&gt;     # whatever is printed here will go to &quot;out&quot;</span>
-<span class="sd">    &gt;&gt;&gt;     print(&#39;Hello&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; with redirect_stdstream() as out:</span>
+<span class="sd">    ...     # Whatever is printed here will go to &quot;out&quot;</span>
+<span class="sd">    ...     print(&#39;Hello&#39;)</span>
+<span class="sd">    ...</span>
 <span class="sd">    &gt;&gt;&gt; out.seek(0)</span>
 <span class="sd">    &gt;&gt;&gt; captured = out.read()</span>
 <span class="sd">    &gt;&gt;&gt; print(captured)</span>
-<span class="sd">    b&#39;Hello&#39;</span>
+<span class="sd">    &#39;Hello&#39;</span>
 
-<span class="sd">    By default, it returns an :class:`io.BytesIO` object.</span>
+<span class="sd">    By default, it returns an :class:`io.StringIO` object.</span>
+<span class="sd">    If you are working with the :mod:`logging` package, beware that you might</span>
+<span class="sd">    have to define a special :class:`logging.Logger` instance for the messages</span>
+<span class="sd">    sent within the duration of the context.</span>
+<span class="sd">    For example, take a look at the following code:</span>
 
-<span class="sd">    :param stream: object to collect the output stream.</span>
-<span class="sd">    :type stream: file</span>
-<span class="sd">    :returns: output stream (:class:`io.BytesIO` by default).</span>
-<span class="sd">    :rtype: io.BytesIO or file</span>
+<span class="sd">    &gt;&gt;&gt; with pyscripts.redirect_stdstream(&#39;stdout&#39;) as stdout, pyscripts.redirect_stdstream(&#39;stderr&#39;) as stderr:</span>
+<span class="sd">    ...     #</span>
+<span class="sd">    ...     # Define the logger</span>
+<span class="sd">    ...     #</span>
+<span class="sd">    ...     logger = logging.getLogger(&#39;test&#39;)</span>
+<span class="sd">    ...     logger.setLevel(logging.INFO)</span>
+<span class="sd">    ...     #</span>
+<span class="sd">    ...     # Define the handler for &quot;stdout&quot;</span>
+<span class="sd">    ...     #</span>
+<span class="sd">    ...     hi = logging.StreamHandler(stdout)</span>
+<span class="sd">    ...     hi.setLevel(logging.INFO)</span>
+<span class="sd">    ...     #</span>
+<span class="sd">    ...     # Define the handler for &quot;stderr&quot;</span>
+<span class="sd">    ...     #</span>
+<span class="sd">    ...     he = logging.StreamHandler(stderr)</span>
+<span class="sd">    ...     he.setLevel(logging.WARNING)</span>
+<span class="sd">    ...     #</span>
+<span class="sd">    ...     # Define the formatter</span>
+<span class="sd">    ...     #</span>
+<span class="sd">    ...     f = logging.Formatter(&#39;%(levelname)s: %(message)s&#39;)</span>
+<span class="sd">    ...     hi.setFormatter(f)</span>
+<span class="sd">    ...     he.setFormatter(f)</span>
+<span class="sd">    ...     #</span>
+<span class="sd">    ...     # Add handlers</span>
+<span class="sd">    ...     #</span>
+<span class="sd">    ...     logger.addHandler(hi)</span>
+<span class="sd">    ...     logger.addHandler(he)</span>
+<span class="sd">    ...     #</span>
+<span class="sd">    ...     # Display some messages</span>
+<span class="sd">    ...     #</span>
+<span class="sd">    ...     logger.info(&#39;information&#39;)</span>
+<span class="sd">    ...     logger.error(&#39;error&#39;)</span>
+<span class="sd">    ...</span>
+<span class="sd">    &gt;&gt;&gt; stdout.seek(0)</span>
+<span class="sd">    &gt;&gt;&gt; stdout.readlines()</span>
+<span class="sd">    [&#39;INFO: information\\n&#39;, &#39;ERROR: error\\n&#39;]</span>
+<span class="sd">    &gt;&gt;&gt; stderr.seek(0)</span>
+<span class="sd">    &gt;&gt;&gt; stderr.readlines()</span>
+<span class="sd">    [&#39;ERROR: error\\n&#39;]</span>
+
+<span class="sd">    Beware that the :mod:`logging` package uses strings.</span>
+<span class="sd">    If a byte-like working object is passed to :func:`redirect_stdstream`, the</span>
+<span class="sd">    execution will probably crash.</span>
+
+<span class="sd">    .. warning::</span>
+<span class="sd">       The call to this function will temporary close &quot;sys.stdout&quot; or</span>
+<span class="sd">       &quot;sys.stderr&quot;, and will assign a new stream to them. Any object doing</span>
+<span class="sd">       operations on the old streams will most likely cause an error.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
-    <span class="n">stream</span> <span class="o">=</span> <span class="n">stream</span> <span class="k">if</span> <span class="n">stream</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">()</span>
+    <span class="n">choices</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;stdout&#39;</span><span class="p">,</span> <span class="s1">&#39;stderr&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">istream</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">choices</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Unknown stream &quot;</span><span class="si">{}</span><span class="s1">&quot;; please select any of &#39;</span>\
+                         <span class="s1">&#39;the following: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">istream</span><span class="p">,</span> <span class="n">choices</span><span class="p">))</span>
 
-    <span class="c1"># The original fd stdout points to</span>
-    <span class="n">original_stdout_fd</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">fileno</span><span class="p">()</span>
+    <span class="n">choices</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">stream_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">choices</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Unknown stream type &quot;</span><span class="si">{}</span><span class="s1">&quot;; please select any of &#39;</span>\
+                         <span class="s1">&#39;the following: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">stream_type</span><span class="p">,</span> <span class="n">choices</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">_redirect_stdout</span><span class="p">(</span> <span class="n">to_fd</span> <span class="p">):</span>
+    <span class="n">ostream</span> <span class="o">=</span> <span class="n">ostream</span> <span class="k">if</span> <span class="n">ostream</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
+
+    <span class="c1"># The original fd stream points to</span>
+    <span class="n">original_stream_fd</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="n">istream</span><span class="p">)</span><span class="o">.</span><span class="n">fileno</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_redirect</span><span class="p">(</span> <span class="n">to_fd</span><span class="p">,</span> <span class="n">istream</span> <span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        Redirect stdout to the given file descriptor.</span>
+<span class="sd">        Redirect &quot;istream&quot; to the given file descriptor.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="c1"># Flush the C-level buffer stdout</span>
+        <span class="c1"># Flush the C-level buffer stream</span>
         <span class="n">libc</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">CDLL</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
-        <span class="n">c_stdout</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_void_p</span><span class="o">.</span><span class="n">in_dll</span><span class="p">(</span><span class="n">libc</span><span class="p">,</span> <span class="s1">&#39;stdout&#39;</span><span class="p">)</span>
-        <span class="n">libc</span><span class="o">.</span><span class="n">fflush</span><span class="p">(</span><span class="n">c_stdout</span><span class="p">)</span>
+        <span class="n">c_stream</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_void_p</span><span class="o">.</span><span class="n">in_dll</span><span class="p">(</span><span class="n">libc</span><span class="p">,</span> <span class="n">istream</span><span class="p">)</span>
+        <span class="n">libc</span><span class="o">.</span><span class="n">fflush</span><span class="p">(</span><span class="n">c_stream</span><span class="p">)</span>
 
-        <span class="c1"># Flush and close sys.stdout - also closes the file descriptor (fd)</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="c1"># Flush and close sys.&lt;stream&gt; - also closes the file descriptor (fd)</span>
+        <span class="nb">getattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="n">istream</span><span class="p">)</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-        <span class="c1"># Make original_stdout_fd point to the same file as to_fd</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">dup2</span><span class="p">(</span><span class="n">to_fd</span><span class="p">,</span> <span class="n">original_stdout_fd</span><span class="p">)</span>
+        <span class="c1"># Make original_stream_fd point to the same file as to_fd</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">dup2</span><span class="p">(</span><span class="n">to_fd</span><span class="p">,</span> <span class="n">original_stream_fd</span><span class="p">)</span>
 
-        <span class="c1"># Create a new sys.stdout that points to the redirected fd</span>
-        <span class="n">c</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">FileIO</span><span class="p">(</span><span class="n">original_stdout_fd</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">TextIOWrapper</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+        <span class="c1"># Create a new sys.&lt;stream&gt; that points to the redirected fd</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">FileIO</span><span class="p">(</span><span class="n">original_stream_fd</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="n">istream</span><span class="p">,</span> <span class="n">io</span><span class="o">.</span><span class="n">TextIOWrapper</span><span class="p">(</span><span class="n">c</span><span class="p">))</span>
 
-    <span class="c1"># Save a copy of the original stdout fd in saved_stdout_fd</span>
-    <span class="n">saved_stdout_fd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">dup</span><span class="p">(</span><span class="n">original_stdout_fd</span><span class="p">)</span>
+    <span class="c1"># Save a copy of the original stream fd in saved_stream_fd</span>
+    <span class="n">saved_stream_fd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">dup</span><span class="p">(</span><span class="n">original_stream_fd</span><span class="p">)</span>
 
     <span class="k">try</span><span class="p">:</span>
 
-        <span class="c1"># Create a temporary file and redirect stdout to it</span>
-        <span class="n">tfile</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryFile</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;w+b&#39;</span><span class="p">)</span>
-        <span class="n">_redirect_stdout</span><span class="p">(</span><span class="n">tfile</span><span class="o">.</span><span class="n">fileno</span><span class="p">())</span>
+        <span class="c1"># Create a temporary file and redirect stream to it</span>
+        <span class="n">tfile</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryFile</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;w+</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">stream_type</span><span class="p">))</span>
 
-        <span class="c1"># Yield to caller, then redirect stdout back to the saved fd</span>
-        <span class="k">yield</span> <span class="n">stream</span>
-        <span class="n">_redirect_stdout</span><span class="p">(</span><span class="n">saved_stdout_fd</span><span class="p">)</span>
+        <span class="n">_redirect</span><span class="p">(</span><span class="n">tfile</span><span class="o">.</span><span class="n">fileno</span><span class="p">(),</span> <span class="n">istream</span><span class="p">)</span>
+
+        <span class="c1"># Yield to caller</span>
+        <span class="k">yield</span> <span class="n">ostream</span>
+
+        <span class="c1"># Redirect stream back to the saved fd</span>
+        <span class="n">_redirect</span><span class="p">(</span><span class="n">saved_stream_fd</span><span class="p">,</span> <span class="n">istream</span><span class="p">)</span>
 
         <span class="c1"># Copy contents of temporary file to the given stream</span>
         <span class="n">tfile</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
         <span class="n">tfile</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">io</span><span class="o">.</span><span class="n">SEEK_SET</span><span class="p">)</span>
-        <span class="n">stream</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">tfile</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+        <span class="n">ostream</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">tfile</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
 
     <span class="k">finally</span><span class="p">:</span>
         <span class="n">tfile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">saved_stdout_fd</span><span class="p">)</span></div>
+        <span class="n">os</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">saved_stream_fd</span><span class="p">)</span></div>
 </pre></div>
 
           </div>

@@ -5,13 +5,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>pyscripts.deps &#8212; pyscripts 0.0.0.dev1 documentation</title>
+    <title>pyscripts.deps &#8212; pyscripts 0.0.0.dev3 documentation</title>
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.0.0.dev1',
+        VERSION:     '0.0.0.dev3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -58,7 +58,7 @@
 <span class="kn">import</span> <span class="nn">os</span>
 
 <span class="c1"># Local</span>
-<span class="kn">from</span> <span class="nn">pyscripts.display</span> <span class="k">import</span> <span class="n">stdout_redirector</span>
+<span class="kn">from</span> <span class="nn">pyscripts.display</span> <span class="k">import</span> <span class="n">redirect_stdstream</span>
 
 <span class="c1"># Default size of the pool to get the dependencies</span>
 <span class="n">__pool_size__</span> <span class="o">=</span> <span class="mi">4</span>
@@ -72,6 +72,7 @@
 <span class="sd">    Return the dependencies on a package for a given python file.</span>
 <span class="sd">    Dependencies are acquired on a different process, so it does</span>
 <span class="sd">    not interfere with this stack.</span>
+<span class="sd">    The package must be importable from the current environment.</span>
 
 <span class="sd">    :param pyfile: path to the python file to process.</span>
 <span class="sd">    :type pyfile: str</span>
@@ -122,6 +123,7 @@
 <div class="viewcode-block" id="direct_dependencies"><a class="viewcode-back" href="../../api/pyscripts.direct_dependencies.html#pyscripts.direct_dependencies">[docs]</a><span class="k">def</span> <span class="nf">direct_dependencies</span><span class="p">(</span> <span class="n">pyfile</span><span class="p">,</span> <span class="n">pkg_name</span><span class="p">,</span> <span class="n">abspath</span> <span class="o">=</span> <span class="kc">False</span> <span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Get the direct dependencies of the given python file on a given package.</span>
+<span class="sd">    The package must be importable from the current environment.</span>
 
 <span class="sd">    :param pyfile: path to the python file to process.</span>
 <span class="sd">    :type pyfile: str</span>
@@ -136,7 +138,7 @@
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">deps</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
 
-    <span class="k">with</span> <span class="n">stdout_redirector</span><span class="p">():</span>
+    <span class="k">with</span> <span class="n">redirect_stdstream</span><span class="p">():</span>
 
         <span class="c1"># Load the dependencies of the pyfile with the modules</span>
         <span class="n">spec</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">spec_from_file_location</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">pyfile</span><span class="p">)</span>

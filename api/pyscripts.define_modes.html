@@ -5,13 +5,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>define_modes &#8212; pyscripts 0.0.0.dev1 documentation</title>
+    <title>define_modes &#8212; pyscripts 0.0.0.dev3 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.0.0.dev1',
+        VERSION:     '0.0.0.dev3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -65,7 +65,13 @@ so after typing</p>
 </pre></div>
 </div>
 <p>then “args.func” will be the callable to call (func_1 or func_2, in this
-case). The name of this attribute can be changed via “arg_mode”.</p>
+case).
+The name of this attribute can be changed via “arg_mode”.
+The stored function is not directly “func_1” or “func_2”, but a simple
+wrapper around these functions which allows to give an instance of
+argparse.Namespace as the only argument.
+The wrapper will transform it into a dictionary, expanding its values and
+passing them to the desired functions.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />

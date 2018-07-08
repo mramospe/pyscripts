@@ -1,0 +1,6 @@
+redirect_stdstream
+==================
+
+.. currentmodule:: pyscripts
+
+.. autofunction:: redirect_stdstream

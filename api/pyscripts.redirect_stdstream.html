@@ -1,0 +1,207 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>redirect_stdstream &#8212; pyscripts 0.0.0.dev3 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.0.0.dev3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="call" href="pyscripts.call.html" />
+    <link rel="prev" title="direct_dependencies" href="pyscripts.direct_dependencies.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="redirect-stdstream">
+<h1>redirect_stdstream<a class="headerlink" href="#redirect-stdstream" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="pyscripts.redirect_stdstream">
+<code class="descclassname">pyscripts.</code><code class="descname">redirect_stdstream</code><span class="sig-paren">(</span><em>istream='stdout'</em>, <em>ostream=None</em>, <em>stream_type='t'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscripts/display.html#redirect_stdstream"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscripts.redirect_stdstream" title="Permalink to this definition">¶</a></dt>
+<dd><p>Redirect the information going to “istream” to the given stream.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>istream</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – where to redirect the output from. It can be any of     “stdout” or “stderr”.</li>
+<li><strong>ostream</strong> (<em>file</em>) – object to collect the output stream.</li>
+<li><strong>stream_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – type of stream. ‘b’ if it works with byte objects or     ‘t’ if it does it with strings.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">output stream (<a class="reference external" href="https://docs.python.org/3/library/io.html#io.StringIO" title="(in Python v3.7)"><code class="xref py py-class docutils literal"><span class="pre">io.StringIO</span></code></a> by default).</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><a class="reference external" href="https://docs.python.org/3/library/io.html#io.StringIO" title="(in Python v3.7)">io.StringIO</a> or file</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.7)"><strong>ValueError</strong></a> – if an incorrect input stream name or type is provided.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>The call to this function opens a new context, so you can write:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">redirect_stdstream</span><span class="p">()</span> <span class="k">as</span> <span class="n">out</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="c1"># Whatever is printed here will go to &quot;out&quot;</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Hello&#39;</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">out</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">captured</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">captured</span><span class="p">)</span>
+<span class="go">&#39;Hello&#39;</span>
+</pre></div>
+</div>
+<p>By default, it returns an <a class="reference external" href="https://docs.python.org/3/library/io.html#io.StringIO" title="(in Python v3.7)"><code class="xref py py-class docutils literal"><span class="pre">io.StringIO</span></code></a> object.
+If you are working with the <a class="reference external" href="https://docs.python.org/3/library/logging.html#module-logging" title="(in Python v3.7)"><code class="xref py py-mod docutils literal"><span class="pre">logging</span></code></a> package, beware that you might
+have to define a special <a class="reference external" href="https://docs.python.org/3/library/logging.html#logging.Logger" title="(in Python v3.7)"><code class="xref py py-class docutils literal"><span class="pre">logging.Logger</span></code></a> instance for the messages
+sent within the duration of the context.
+For example, take a look at the following code:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">pyscripts</span><span class="o">.</span><span class="n">redirect_stdstream</span><span class="p">(</span><span class="s1">&#39;stdout&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">pyscripts</span><span class="o">.</span><span class="n">redirect_stdstream</span><span class="p">(</span><span class="s1">&#39;stderr&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">stderr</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="c1">#</span>
+<span class="gp">... </span>    <span class="c1"># Define the logger</span>
+<span class="gp">... </span>    <span class="c1">#</span>
+<span class="gp">... </span>    <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;test&#39;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="c1">#</span>
+<span class="gp">... </span>    <span class="c1"># Define the handler for &quot;stdout&quot;</span>
+<span class="gp">... </span>    <span class="c1">#</span>
+<span class="gp">... </span>    <span class="n">hi</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">(</span><span class="n">stdout</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">hi</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="c1">#</span>
+<span class="gp">... </span>    <span class="c1"># Define the handler for &quot;stderr&quot;</span>
+<span class="gp">... </span>    <span class="c1">#</span>
+<span class="gp">... </span>    <span class="n">he</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">(</span><span class="n">stderr</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">he</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">WARNING</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="c1">#</span>
+<span class="gp">... </span>    <span class="c1"># Define the formatter</span>
+<span class="gp">... </span>    <span class="c1">#</span>
+<span class="gp">... </span>    <span class="n">f</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%(levelname)s</span><span class="s1">: </span><span class="si">%(message)s</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">hi</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">he</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="c1">#</span>
+<span class="gp">... </span>    <span class="c1"># Add handlers</span>
+<span class="gp">... </span>    <span class="c1">#</span>
+<span class="gp">... </span>    <span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">hi</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">he</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="c1">#</span>
+<span class="gp">... </span>    <span class="c1"># Display some messages</span>
+<span class="gp">... </span>    <span class="c1">#</span>
+<span class="gp">... </span>    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;information&#39;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;error&#39;</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stdout</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stdout</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+<span class="go">[&#39;INFO: information\n&#39;, &#39;ERROR: error\n&#39;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stderr</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stderr</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+<span class="go">[&#39;ERROR: error\n&#39;]</span>
+</pre></div>
+</div>
+<p>Beware that the <a class="reference external" href="https://docs.python.org/3/library/logging.html#module-logging" title="(in Python v3.7)"><code class="xref py py-mod docutils literal"><span class="pre">logging</span></code></a> package uses strings.
+If a byte-like working object is passed to <a class="reference internal" href="#pyscripts.redirect_stdstream" title="pyscripts.redirect_stdstream"><code class="xref py py-func docutils literal"><span class="pre">redirect_stdstream()</span></code></a>, the
+execution will probably crash.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">The call to this function will temporary close “sys.stdout” or
+“sys.stderr”, and will assign a new stream to them. Any object doing
+operations on the old streams will most likely cause an error.</p>
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">pyscripts</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../main.html">Functions and classes</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../main.html#functions">Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../main.html">Functions and classes</a><ul>
+      <li>Previous: <a href="pyscripts.direct_dependencies.html" title="previous chapter">direct_dependencies</a></li>
+      <li>Next: <a href="pyscripts.call.html" title="next chapter">call</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Miguel Ramos Pernas.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="../_sources/api/pyscripts.redirect_stdstream.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
