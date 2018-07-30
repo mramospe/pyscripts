@@ -46,6 +46,7 @@ def test_persisting_dir():
 
             return True
 
+        assert function.__name__ == 'function'
         assert function()
 
     with tempfile.TemporaryDirectory() as td:
@@ -59,4 +60,5 @@ def test_persisting_dir():
 
             return True
 
+        assert function.__name__ == 'function'
         assert function()

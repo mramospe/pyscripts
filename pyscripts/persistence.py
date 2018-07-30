@@ -173,6 +173,7 @@ class persisting_dir(object):
         else:
             path = self._path
 
+        @functools.wraps(mode)
         def __wrapper( *args, **kwargs ):
             '''
             Do the actual call to the function, using the given arguments.
