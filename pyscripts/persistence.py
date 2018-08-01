@@ -11,7 +11,7 @@ import functools
 import os
 
 
-__all__ = ['PersistenceDir', 'persisting_dir']
+__all__ = ['PersistenceDir', 'persisting_dir', 'persisting_dirs']
 
 
 class PersistenceDir(object):
@@ -157,6 +157,8 @@ class persisting_dir(object):
         :rtype: function
         :raises RuntimeError: if an attempt to override the keyword argument used \
         for the path is done.
+
+        .. seealso:: :class:`pyscripts.persisting_dirs`
         '''
         super(persisting_dir, self).__init__()
 
@@ -181,9 +183,63 @@ class persisting_dir(object):
             if self._arg in kwargs:
                 raise RuntimeError('Defined keyword argument "{}" for path '\
                                    'persistence but is given as an input to '\
-                                   'the function call')
+                                   'the function call'.format(self._arg))
 
             kwargs[self._arg] = PersistenceDir(path)
+
+            return mode(*args, **kwargs)
+
+        return __wrapper
+
+
+class persisting_dirs(object):
+
+    def __init__( self, args_paths, use_func_name = False ):
+        '''
+        Function to decorate a mode, so it will create
+        :class:`pyscripts.PersistenceDir` instances, using paths in the values
+        of "args_paths", that will be passed to the function using its keys.
+
+        :param args_paths: dictionary of "args" and "paths. The keys \
+        correspond to the keyword arguments that will be used, while the \
+        values correspond to the associated path.
+        :type args_paths: dict
+        :param use_func_name: if set to True, then the name of the function \
+        will be added at the end of the given path.
+        :type use_func_name: bool
+        :returns: decorated function.
+        :rtype: function
+        :raises RuntimeError: if an attempt to override any keyword argument used \
+        for the paths is done.
+
+        .. seealso:: :class:`pyscripts.persisting_dir`
+        '''
+        super(persisting_dirs, self).__init__()
+
+        self._args_paths = args_paths
+        self._ufn        = use_func_name
+
+    def __call__( self, mode ):
+        '''
+        Inner wrapper around the mode.
+        '''
+        if self._ufn:
+            args_paths = {k: os.path.join(p, mode.__name__) for k, p in self._args_paths.items()}
+        else:
+            args_paths = self._args_paths
+
+        @functools.wraps(mode)
+        def __wrapper( *args, **kwargs ):
+            '''
+            Do the actual call to the function, using the given arguments.
+            '''
+            for k, v in args_paths.items():
+                if k in kwargs:
+                    raise RuntimeError('Defined keyword argument "{}" for path '\
+                                           'persistence but is given as an input to '\
+                                           'the function call'.format(k))
+
+                kwargs[k] = PersistenceDir(v)
 
             return mode(*args, **kwargs)
 

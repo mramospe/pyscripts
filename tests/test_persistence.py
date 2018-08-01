@@ -62,3 +62,40 @@ def test_persisting_dir():
 
         assert function.__name__ == 'function'
         assert function()
+
+
+def test_persisting_dirs():
+    '''
+    Test for the "persisting_dirs" function.
+    '''
+    with tempfile.TemporaryDirectory() as td1, tempfile.TemporaryDirectory() as td2:
+        @pyscripts.persisting_dirs(args_paths={'tmpdir1': td1, 'tmpdir2': td2})
+        def function( tmpdir1, tmpdir2 ):
+            '''
+            Inner function to test.
+            '''
+            for pd, td in ((tmpdir1, td1), (tmpdir2, td2)):
+                assert os.path.isdir(pd.path())
+                assert pd.path() == td
+
+            return True
+
+        assert function.__name__ == 'function'
+        assert function()
+
+    with tempfile.TemporaryDirectory() as td1, tempfile.TemporaryDirectory() as td2:
+        @pyscripts.persisting_dirs(
+            args_paths={'tmpdir1': td1, 'tmpdir2': td2},
+            use_func_name=True)
+        def function( tmpdir1, tmpdir2 ):
+            '''
+            Inner function to test.
+            '''
+            for pd, td in ((tmpdir1, td1), (tmpdir2, td2)):
+                assert os.path.isdir(pd.path())
+                assert os.path.join(td, 'function') == pd.path()
+
+            return True
+
+        assert function.__name__ == 'function'
+        assert function()
