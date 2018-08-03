@@ -8,6 +8,7 @@ __email__  = ['miguel.ramos.pernas@cern.ch']
 
 # Python
 import os
+import pytest
 import tempfile
 
 # Local
@@ -22,13 +23,17 @@ def test_persistencedir():
 
         d = pyscripts.PersistenceDir(td)
 
-        assert os.path.isdir(d.path())
+        assert os.path.isdir(d.path)
         assert d.join('file.txt') == os.path.join(td, 'file.txt')
 
         sd = d['sdir']
 
-        assert os.path.isdir(os.path.join(d.path(), 'sdir'))
-        assert os.path.join(d.path(), 'sdir') == sd.path()
+        assert os.path.isdir(os.path.join(d.path, 'sdir'))
+        assert os.path.join(d.path, 'sdir') == sd.path
+
+        # The path is a private attribute
+        with pytest.raises(AttributeError):
+            sd.path = 'new/path'
 
 
 def test_persisting_dir():
@@ -41,8 +46,8 @@ def test_persisting_dir():
             '''
             Inner function to test.
             '''
-            assert os.path.isdir(tmpdir.path())
-            assert tmpdir.path() == td
+            assert os.path.isdir(tmpdir.path)
+            assert tmpdir.path == td
 
             return True
 
@@ -55,8 +60,8 @@ def test_persisting_dir():
             '''
             Inner function to test.
             '''
-            assert os.path.isdir(tmpdir.path())
-            assert os.path.join(td, 'function') == tmpdir.path()
+            assert os.path.isdir(tmpdir.path)
+            assert os.path.join(td, 'function') == tmpdir.path
 
             return True
 
@@ -75,8 +80,8 @@ def test_persisting_dirs():
             Inner function to test.
             '''
             for pd, td in ((tmpdir1, td1), (tmpdir2, td2)):
-                assert os.path.isdir(pd.path())
-                assert pd.path() == td
+                assert os.path.isdir(pd.path)
+                assert pd.path == td
 
             return True
 
@@ -92,8 +97,8 @@ def test_persisting_dirs():
             Inner function to test.
             '''
             for pd, td in ((tmpdir1, td1), (tmpdir2, td2)):
-                assert os.path.isdir(pd.path())
-                assert os.path.join(td, 'function') == pd.path()
+                assert os.path.isdir(pd.path)
+                assert os.path.join(td, 'function') == pd.path
 
             return True
 

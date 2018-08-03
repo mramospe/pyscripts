@@ -127,9 +127,10 @@ class PersistenceDir(object):
         '''
         return os.path.join(self._path, path)
 
+    @property
     def path( self ):
         '''
-        Returns the path stored in the class.
+        Path stored in the class.
 
         :returns: path stored in the class.
         :rtype: str
