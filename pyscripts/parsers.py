@@ -45,7 +45,7 @@ def define_modes( parser, modes, call_name = __callable_name__, defaults = None,
     One can retrieve the single parser (per callable) as:
 
     >>> parser = argparse.ArgumentParser()
-    >>> subparsers = make_subparsers(parser, [func_1, func2])
+    >>> subparsers = define_modes(parser, [func_1, func2])
     >>> parser_func_1 = subparsers.choices['func_1']
     >>> parser_func_2 = subparsers.choices['func_2']
 
@@ -53,7 +53,7 @@ def define_modes( parser, modes, call_name = __callable_name__, defaults = None,
     so after typing
 
     >>> parser = argparse.ArgumentParser()
-    >>> make_subparsers(parser, [func_1, func2])
+    >>> define_modes(parser, [func_1, func2])
     >>> args = parser.parse_args()
 
     then "args.func" will be the callable to call (func_1 or func_2, in this
@@ -88,7 +88,7 @@ def define_modes( parser, modes, call_name = __callable_name__, defaults = None,
     for m in modes:
         p = subparsers.add_parser(m.__name__, help=m.__doc__)
 
-        defaults[call_name] = _transforming_namespace_to_dict(m)
+        defaults[call_name] = m
 
         if apply_to_parsers is not None:
             apply_to_parsers(p)
@@ -123,7 +123,7 @@ def process_args( args, drop = None, call_name = __callable_name__ ):
         for d in drop:
             dct.pop(d)
 
-    func = dct.pop(call_name)
+    func = _transforming_namespace_to_dict(dct.pop(call_name))
 
     nm = argparse.Namespace(**dct)
 
