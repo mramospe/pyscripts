@@ -10,7 +10,7 @@ import argparse
 
 # Default name of the callable in the attributes of the Namespace
 # obtained after processing the arguments.
-__callable_name__ = 'func'
+__callable_name__ = 'mode'
 
 
 __all__ = ['call', 'define_modes', 'process_args']
@@ -81,7 +81,8 @@ def define_modes( parser, modes, call_name = __callable_name__, defaults = None,
     :returns: collection of subparsers.
     :rtype: argparse._SubParsersAction
     '''
-    subparsers = parser.add_subparsers()
+    subparsers = parser.add_subparsers(title='Available modes', dest=__callable_name__)
+    subparsers.required = True
 
     defaults = defaults if defaults is not None else {}
 
