@@ -17,7 +17,7 @@ import tempfile
 from contextlib import contextmanager
 
 
-__all__ = ['redirect_stdstream']
+__all__ = ['redirect_stdstream', 'redirecting_stdstream']
 
 
 def decorate( deco ):
@@ -186,3 +186,46 @@ def redirect_stdstream( istream = 'stdout', ostream = None, stream_type = 't' ):
     finally:
         tfile.close()
         os.close(saved_stream_fd)
+
+
+def redirecting_stdstream( *args, **kwargs ):
+    '''
+    Decorator version of :func:`pyscripts.redirect_stdstream`.
+    The arguments and keyword arguments correspond to those from that function.
+    It is recommended to pass the "ostream" argument, since otherwise the
+    output will be lost.
+    You can concatenate two decorators of this kind:
+
+    >>> import io, sys
+    >>> stream = io.StringIO()
+    >>> @pyscripts.redirecting_stdstream('stderr', ostream=stream)
+    ... @pyscripts.redirecting_stdstream('stdout', ostream=stream)
+    ... def send_to_all_streams():
+    ...     print('hello', file=sys.stdout)
+    ...     print('error', file=sys.stderr)
+    ...
+    >>> send_to_all_streams()
+    >>> stream.seek(0);
+    >>> stream.readlines()
+    ['hello\n', 'error\n']
+
+    .. seealso:: :func:`pyscripts.redirect_stdstream`
+    '''
+    def _wrapper( func ):
+        '''
+        :param func: function to decorate.
+        :type func: function
+        :returns: decorated function.
+        :rtype: function
+        '''
+        def __wrapper( *sub_args, **sub_kwargs ):
+            '''
+            Do the actual call to the function, using the given arguments.
+            '''
+            with redirect_stdstream(*args, **kwargs):
+                out = func(*sub_args, **sub_kwargs)
+            return out
+
+        return __wrapper
+
+    return _wrapper

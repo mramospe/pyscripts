@@ -11,7 +11,46 @@ import functools
 import os
 
 
-__all__ = ['PersistenceDir', 'persisting_dir', 'persisting_dirs']
+__all__ = ['PersDirArg', 'PersistenceDir', 'persisting_dir', 'persisting_dirs']
+
+
+class PersDirArg(object):
+
+    def __init__( self, arg, path, use_func_name = False ):
+        '''
+        Represent an object storing a path and an argument name. These
+        passed to a mode as a new :class:`pyscripts.PersistenceDir`
+        instance in the argument "arg".
+
+        .. seealso:: :class:`pyscripts.persisting_dir`, :class:`pyscripts.persisting_dirs`
+        '''
+        self._arg  = arg
+        self._path = path
+        self.ufn   = use_func_name
+
+    def append_to_kwargs( self, mode, kwargs ):
+        '''
+        Create a copy of the keyword arguments and add the stored path
+        to it.
+
+        :raises RuntimeError: if an attempt to override the keyword argument used \
+        for the path is done.
+        '''
+        kwargs = dict(kwargs)
+
+        if self.ufn:
+            path = os.path.join(self._path, mode.__name__)
+        else:
+            path = self._path
+
+        if self._arg in kwargs:
+            raise RuntimeError('Defined keyword argument "{}" for path '\
+                               'persistence but is given as an input to '\
+                               'the function call'.format(self._arg))
+
+        kwargs[self._arg] = PersistenceDir(path)
+
+        return kwargs
 
 
 class PersistenceDir(object):
@@ -154,39 +193,28 @@ class persisting_dir(object):
         :param use_func_name: if set to True, then the name of the function \
         will be added at the end of the given path.
         :type use_func_name: bool
-        :returns: decorated function.
-        :rtype: function
-        :raises RuntimeError: if an attempt to override the keyword argument used \
-        for the path is done.
 
-        .. seealso:: :class:`pyscripts.persisting_dirs`
+        .. seealso:: :class:`pyscripts.PersDirArg`, :class:`pyscripts.persisting_dirs`
         '''
         super(persisting_dir, self).__init__()
 
-        self._arg  = arg
-        self._path = path
-        self._ufn  = use_func_name
+        self._dirarg = PersDirArg(arg, path, use_func_name)
 
     def __call__( self, mode ):
         '''
         Inner wrapper around the mode.
-        '''
-        if self._ufn:
-            path = os.path.join(self._path, mode.__name__)
-        else:
-            path = self._path
 
+        :param mode: mode to decorate.
+        :type mode: function
+        :returns: decorated function.
+        :rtype: function
+        '''
         @functools.wraps(mode)
         def __wrapper( *args, **kwargs ):
             '''
             Do the actual call to the function, using the given arguments.
             '''
-            if self._arg in kwargs:
-                raise RuntimeError('Defined keyword argument "{}" for path '\
-                                   'persistence but is given as an input to '\
-                                   'the function call'.format(self._arg))
-
-            kwargs[self._arg] = PersistenceDir(path)
+            kwargs = self._dirarg.append_to_kwargs(mode, kwargs)
 
             return mode(*args, **kwargs)
 
@@ -195,52 +223,47 @@ class persisting_dir(object):
 
 class persisting_dirs(object):
 
-    def __init__( self, args_paths, use_func_name = False ):
+    def __init__( self, dirargs, use_func_name = None ):
         '''
         Function to decorate a mode, so it will create
-        :class:`pyscripts.PersistenceDir` instances, using paths in the values
-        of "args_paths", that will be passed to the function using its keys.
+        :class:`pyscripts.PersistenceDir` instances, using the argument
+        names and paths specified in "dirargs" as :class:`pyscripts.PersDirArg`
+        instances. If "use_func_name" is defined, then the values in the
+        previous instances will be overriden by this.
 
-        :param args_paths: dictionary of "args" and "paths. The keys \
-        correspond to the keyword arguments that will be used, while the \
-        values correspond to the associated path.
-        :type args_paths: dict
+        :param dirargs: collection with the arguments and paths to use.
+        :type args_paths: tuple(PersDirPath)
         :param use_func_name: if set to True, then the name of the function \
-        will be added at the end of the given path.
+        will be added at the end of the given paths, overwriting the possible \
+        values already set in the :class:`pyscripts.PersDirArg` instances.
         :type use_func_name: bool
-        :returns: decorated function.
-        :rtype: function
-        :raises RuntimeError: if an attempt to override any keyword argument used \
-        for the paths is done.
 
-        .. seealso:: :class:`pyscripts.persisting_dir`
+        .. seealso:: :class:`pyscripts.PersDirArg`, :class:`pyscripts.persisting_dir`
         '''
         super(persisting_dirs, self).__init__()
 
-        self._args_paths = args_paths
-        self._ufn        = use_func_name
+        self._dirargs = dirargs
+
+        if use_func_name is not None:
+            for d in self._dirargs:
+                d.ufn = use_func_name
 
     def __call__( self, mode ):
         '''
         Inner wrapper around the mode.
-        '''
-        if self._ufn:
-            args_paths = {k: os.path.join(p, mode.__name__) for k, p in self._args_paths.items()}
-        else:
-            args_paths = self._args_paths
 
+        :param mode: mode to decorate.
+        :type mode: function
+        :returns: decorated function.
+        :rtype: function
+        '''
         @functools.wraps(mode)
         def __wrapper( *args, **kwargs ):
             '''
             Do the actual call to the function, using the given arguments.
             '''
-            for k, v in args_paths.items():
-                if k in kwargs:
-                    raise RuntimeError('Defined keyword argument "{}" for path '\
-                                           'persistence but is given as an input to '\
-                                           'the function call'.format(k))
-
-                kwargs[k] = PersistenceDir(v)
+            for d in self._dirargs:
+                kwargs = d.append_to_kwargs(mode, kwargs)
 
             return mode(*args, **kwargs)
 

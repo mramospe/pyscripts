@@ -15,6 +15,29 @@ import tempfile
 import pyscripts
 
 
+def test_persdirarg():
+    '''
+    Test for the "PersDirArg" class.
+    '''
+    with tempfile.TemporaryDirectory() as td:
+
+        def dummy( ppath ):
+            pass
+
+        epath = os.path.join(td, 'example')
+
+        p1 = pyscripts.PersDirArg('ppath', epath)
+        d1 = p1.append_to_kwargs(dummy, {})
+        assert d1['ppath'].path == epath
+
+        p2 = pyscripts.PersDirArg('ppath', epath, use_func_name=True)
+        d2 = p2.append_to_kwargs(dummy, {})
+        assert d2['ppath'].path == os.path.join(epath, dummy.__name__)
+
+        with pytest.raises(RuntimeError):
+            d3 = p2.append_to_kwargs(dummy, d2)
+
+
 def test_persistencedir():
     '''
     Test for the "PersistenceDir" class.
@@ -74,7 +97,10 @@ def test_persisting_dirs():
     Test for the "persisting_dirs" function.
     '''
     with tempfile.TemporaryDirectory() as td1, tempfile.TemporaryDirectory() as td2:
-        @pyscripts.persisting_dirs(args_paths={'tmpdir1': td1, 'tmpdir2': td2})
+        @pyscripts.persisting_dirs(dirargs=[
+            pyscripts.PersDirArg('tmpdir1', td1),
+            pyscripts.PersDirArg('tmpdir2', td2)]
+        )
         def function( tmpdir1, tmpdir2 ):
             '''
             Inner function to test.
@@ -90,7 +116,8 @@ def test_persisting_dirs():
 
     with tempfile.TemporaryDirectory() as td1, tempfile.TemporaryDirectory() as td2:
         @pyscripts.persisting_dirs(
-            args_paths={'tmpdir1': td1, 'tmpdir2': td2},
+            dirargs=[pyscripts.PersDirArg('tmpdir1', td1),
+                     pyscripts.PersDirArg('tmpdir2', td2)],
             use_func_name=True)
         def function( tmpdir1, tmpdir2 ):
             '''

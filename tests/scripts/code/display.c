@@ -10,5 +10,11 @@
 /// Display the input message
 void display( char const* msg )
 {
-  printf("%s", msg);
+  fprintf(stdout, "%s", msg);
+}
+
+/// Display an error message
+void error( char const* msg )
+{
+  fprintf(stderr, "%s", msg);
 }

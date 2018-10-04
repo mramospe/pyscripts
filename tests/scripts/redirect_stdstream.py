@@ -7,6 +7,7 @@ import argparse
 import ctypes
 import logging
 import pytest
+import sys
 import tempfile
 
 # Local
@@ -23,7 +24,7 @@ if __name__ == '__main__':
 
     lib = ctypes.CDLL(args.library)
 
-    # Default redirector
+    # Redirect to "stdout" (default)
     with pyscripts.redirect_stdstream() as f:
 
         print('hello')
@@ -34,7 +35,18 @@ if __name__ == '__main__':
 
     assert a == ['hello\n', 'hello\n']
 
-    # Redirect to stderr with a logger (need to use strings)
+    # Redirect to "stderr"
+    with pyscripts.redirect_stdstream('stderr') as f:
+
+        print('error', file=sys.stderr)
+        lib.error(b'error\n')
+
+    f.seek(0)
+    a = f.readlines()
+
+    assert a == ['error\n', 'error\n']
+
+    # Redirect to "stderr" with a logger (need to use strings)
     with pyscripts.redirect_stdstream('stdout') as stdout, pyscripts.redirect_stdstream('stderr') as stderr:
 
         logger = logging.getLogger('test')

@@ -15,8 +15,9 @@ import pytest
 import subprocess
 
 
-def test_redirect_stdstream( tmpdir ):
+def process_redirect_script( script, tmpdir ):
     '''
+    Run the given script
     '''
     # Define path to the directories
     path = os.path.dirname(os.path.abspath(__file__))
@@ -31,9 +32,23 @@ def test_redirect_stdstream( tmpdir ):
     os.system('gcc -shared -o {} -fPIC {}'.format(lib_path, code_path))
 
     # Define the path to the script
-    script_path = os.path.join(scripts_path, 'redirect_stdstream.py')
+    script_path = os.path.join(scripts_path, script)
 
     # Test default stream (must use a script to do not interfere with pytest)
     p = subprocess.Popen('python {} {}'.format(script_path, lib_path).split())
     if p.wait() != 0:
         assert False
+
+
+def test_redirect_stdstream( tmpdir ):
+    '''
+    Test for the "redirect_stdstream" function.
+    '''
+    process_redirect_script('redirect_stdstream.py', tmpdir)
+
+
+def test_redirecting_stdstream( tmpdir ):
+    '''
+    Test for the "redirecting_stdstream" decorator.
+    '''
+    process_redirect_script('redirecting_stdstream.py', tmpdir)
