@@ -233,8 +233,7 @@ class persisting_dirs(object):
 
         :param dirargs: collection with the arguments and paths to use.
         :type args_paths: tuple(PersDirPath)
-        :param use_func_name: if set to True, then the name of the function \
-        will be added at the end of the given paths, overwriting the possible \
+        :param use_func_name: if set, then it will overwrite the possible \
         values already set in the :class:`pyscripts.PersDirArg` instances.
         :type use_func_name: bool
 

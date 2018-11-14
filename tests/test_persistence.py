@@ -1,5 +1,5 @@
 '''
-Test functions for the "deps" module.
+Test functions for the "persistence" module.
 '''
 
 __author__ = ['Miguel Ramos Pernas']
