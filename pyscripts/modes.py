@@ -28,6 +28,8 @@ def extends( modes, collision_policy=None ):
     :param collision_policy: function defining the policy to use when two \
     or more modes expect the same arguments.
     :type collision_policy: function
+    :returns: result from calling :func:`mode` with keyword arguments.
+    :rtype: function
     '''
     collision_policy = collision_policy or {}
 
@@ -57,8 +59,9 @@ def mode( *args, **kwargs ):
     :param kwargs: dictionary holding the different arguments that will \
     be passed to the decorated function.
     :type kwargs: dict
-    :returns: proxy of the mode to run.
-    :rtype: Mode
+    :returns: proxy for the mode to run, or decorator to create a \
+    :class:`Mode` instance from a function.
+    :rtype: Mode or function
     '''
     err = ValueError('Function "mode" can only be called either taking a function or a set of keyword arguments')
 
