@@ -22,7 +22,7 @@ from pyscripts.display import redirect_stdstream
 __pool_size__ = 4
 
 
-__all__ = ['dependencies', 'direct_dependencies']
+__all__ = ['dependencies', 'direct_dependencies', 'run_once']
 
 
 def dependencies( pyfile, pkg_name, abspath = False, pool_size = __pool_size__ ):
@@ -152,3 +152,28 @@ def _relative_deps( pyfile, deps ):
     deps = [os.path.relpath(d, pyfile_dir) for d in deps]
 
     return deps
+
+
+def run_once( func ):
+    '''
+    Decorator to make a function run only once.
+    This is achieved by creating a new attribute "has_run", in the function
+    wrapper.
+
+    :param func: function to decorate.
+    :type func: function
+    :returns: decorated function.
+    :rtype: function
+    '''
+    @functools.wraps(func)
+    def wrapper( *args, **kwargs ):
+        '''
+        Wrapper around "func".
+        '''
+        if wrapper.has_run == False:
+            wrapper.has_run = True
+            return func(*args, **kwargs)
+
+    wrapper.has_run = False
+
+    return wrapper
