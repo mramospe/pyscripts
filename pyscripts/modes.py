@@ -9,14 +9,15 @@ __email__   = ['miguel.ramos.pernas@cern.ch']
 __all__ = ['extends', 'mode', 'Mode']
 
 
-def extends( modes, collision_policy=None ):
+def extends( modes, kwargs=None, collision_policy=None ):
     '''
     Function to decorate a mode so it also expects the inputs of those
     specified in "modes".
     The argument "collision_policy" defines what to do in case two or
     more modes have the same arguments.
-    It must be a function taking two arguments.
-    One is the current value of the argument, while the other is that
+    It must be a function taking three arguments.
+    The first one is the key, or name of the argument, the second is the
+    current value of the argument, while the last one is that
     from the new mode being processed.
     The value of the argument is set to its output.
     By default, if two or more modes expect the same argument and the
@@ -25,15 +26,20 @@ def extends( modes, collision_policy=None ):
 
     :param modes: modes to extend the decorated function with.
     :type modes: container(Mode)
-    :param collision_policy: function defining the policy to use when two \
-    or more modes expect the same arguments.
-    :type collision_policy: function
+    :param kwargs: extra keyword parameters to consider. These will be \
+    extended to those taken from "modes".
+    :type kwargs: dict
+    :param collision_policy: functions defining the policy to use when two \
+    or more modes expect the same arguments. It must be given as a \
+    dictionary, where the key refers to the name of the argument and the \
+    value is the function.
+    :type collision_policy: dict
     :returns: result from calling :func:`mode` with keyword arguments.
     :rtype: function
     '''
     collision_policy = collision_policy or {}
 
-    kwargs = {}
+    kwargs = kwargs or {}
     for m in modes:
 
         for k, v in m._kwargs.items():
@@ -41,7 +47,7 @@ def extends( modes, collision_policy=None ):
             if k in kwargs:
 
                 if k in collision_policy:
-                    kwargs[k] = collision_policy[k](kwargs[k], v)
+                    kwargs[k] = collision_policy[k](k, kwargs[k], v)
                 elif kwargs[k] != v:
                     raise RuntimeError('Collision for key "{}", and no policy has been specified'.format(k))
 

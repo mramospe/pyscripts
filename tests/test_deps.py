@@ -22,6 +22,9 @@ def test_dependencies():
     p = subprocess.Popen('python {} dependencies'.format(__script_path__).split())
     assert p.wait() == 0
 
+    p = subprocess.Popen('python {} exceptions'.format(__script_path__).split())
+    assert p.wait() == 0
+
 
 def test_direct_dependencies():
     '''

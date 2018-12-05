@@ -44,17 +44,23 @@ def dependencies( pyfile, pkg_name, abspath = False, pool_size = __pool_size__ )
     :returns: list with the paths to the files whom the provided file \
     depends on.
     :rtype: list(str)
+    :raises RuntimeError: If problems appear looking for dependencies.
 
     .. seealso:: :func:`direct_dependencies`
     '''
     parent, child = multiprocessing.Pipe()
 
+    except_event = multiprocessing.Event()
+
     process = multiprocessing.Process(target=_parallelize_deps,
-                                      args=(pyfile, pkg_name, True, child))
+                                      args=(pyfile, pkg_name, True, child, except_event))
 
     process.start()
     deps = set(parent.recv())
     process.join()
+
+    if except_event.is_set():
+        raise RuntimeError('Problems found obtaining the dependencies for file "{}"'.format(pyfile))
 
     # Now get the dependencies of each of the submodules
     pool = multiprocessing.Pool(processes=pool_size)
@@ -72,7 +78,6 @@ def dependencies( pyfile, pkg_name, abspath = False, pool_size = __pool_size__ )
         deps.update(diff)
 
     if not abspath:
-
         deps = _relative_deps(pyfile, deps)
 
     return list(deps)
@@ -116,7 +121,7 @@ def direct_dependencies( pyfile, pkg_name, abspath = False ):
     return list(deps)
 
 
-def _parallelize_deps( pyfile, pkg_name, abspath, pipe ):
+def _parallelize_deps( pyfile, pkg_name, abspath, pipe, except_event ):
     '''
     Function to be sent to a different process to get the dependencies of
     a python file.
@@ -129,10 +134,18 @@ def _parallelize_deps( pyfile, pkg_name, abspath, pipe ):
     :param abspath: bool
     :param pipe: pipe to communicate with the parent.
     :type pipe: multiprocessing.Pipe
+    :param except_event: event to be set if an error is raised while looking \
+    for dependencies.
+    :type except_event: multiprocessing.Event
     '''
-    deps = direct_dependencies(pyfile, pkg_name, abspath)
-    pipe.send(deps)
-    pipe.close()
+    deps = []
+    try:
+        deps = direct_dependencies(pyfile, pkg_name, abspath)
+    except:
+        except_event.set()
+    finally:
+        pipe.send(deps)
+        pipe.close()
 
 
 def _relative_deps( pyfile, deps ):
