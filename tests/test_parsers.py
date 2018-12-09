@@ -7,6 +7,7 @@ __email__  = ['miguel.ramos.pernas@cern.ch']
 
 # Python
 import argparse
+import pytest
 
 # Local
 import pyscripts
@@ -29,12 +30,30 @@ def _define_parser():
         p.add_argument('--test', action='store_true')
         p.add_argument('--entries', type=int)
 
-    parser = argparse.ArgumentParser(description=test_process_args.__doc__)
+    parser = pyscripts.ModeArgumentParser(description='Custom parser')
     parser.add_argument('--main-arg', action='store_true')
 
-    pyscripts.define_modes(parser, [mode_1, mode_2], apply_to_parsers=add_arguments)
+    parser.define_modes([mode_1, mode_2], apply_to_parsers=add_arguments)
 
     return parser
+
+
+def test_callargsproxy():
+    '''
+    Test the "CallableNamespace" class.
+    '''
+    def fun( *args, **kwargs ):
+        return True
+
+    args = argparse.Namespace(a=1, b=2)
+
+    first = pyscripts.CallArgsProxy(fun, args)
+    assert first()
+    second = pyscripts.CallArgsProxy(fun, args, ['--bare'])
+    assert second()
+
+    with pytest.raises(AttributeError):
+        second.function = fun
 
 
 def test_call():
@@ -43,33 +62,38 @@ def test_call():
     '''
     parser = _define_parser()
 
-    args = parser.parse_args('mode_2 --test --entries 100'.split())
+    callobj = parser.parse_args_with_callable('mode_2 --test --entries 100'.split())
 
-    assert pyscripts.call(args) == 2
+    assert callobj() == 2
 
 
-def test_define_modes():
+def test_call_known():
+    '''
+    Test the "call" function.
+    '''
+    parser = _define_parser()
+
+    callobj = parser.parse_known_args_with_callable('mode_2 --test --entries 100 --other'.split())
+
+    assert callobj.unknown_args == ['--other']
+
+    assert callobj() == 2
+
+
+def test_modeargumentparser():
     '''
     Test the "define_modes" function.
     '''
     _define_parser()
 
 
-def test_process_args():
+def test_modeparserproxy():
     '''
-    Test for the "parsers" module.
+    Test the "ModeParserProxy" class.
     '''
-    parser = _define_parser()
+    def fun():
+        return True
 
-    args = parser.parse_args('mode_1 --test --entries 100'.split())
-
-    func, nm = pyscripts.process_args(args)
-
-    dct = vars(nm)
-
-    assert dct['test'] == True
-    assert dct['entries'] == 100
-    assert dct['main_arg'] == False
-    assert pyscripts.parsers.__callable_name__ not in dct
-
-    assert func(nm) == 1
+    m = pyscripts.ModeParserProxy(fun, True)
+    with pytest.raises(AttributeError):
+        m.function = 1

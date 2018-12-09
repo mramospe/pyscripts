@@ -35,10 +35,10 @@ def direct_dependencies():
 
 if __name__ == '__main__':
 
-    parser = argparse.ArgumentParser(description='Determine dependencies')
+    parser = pyscripts.ModeArgumentParser(description='Determine dependencies')
 
-    pyscripts.define_modes(parser, [dependencies, direct_dependencies])
+    parser.define_modes([dependencies, direct_dependencies])
 
-    args = parser.parse_args()
+    args = parser.parse_args_with_callable()
 
-    pyscripts.call(args)
+    args()
