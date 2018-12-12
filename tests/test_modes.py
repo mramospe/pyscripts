@@ -51,7 +51,7 @@ def test_extends():
     # Define the main decorated mode which depends on the previous ones
     @pyscripts.mode(main_par='main')
     @pyscripts.extends([func1, func2, func3, func5, func6],
-                       collision_policy={'inputs': lambda a, b: {**a, **b}})
+                       collision_policy={'inputs': lambda k, a, b: {**a, **b}})
     def main( p1, p3, inputs, main_par ):
         ''' This is the docstring for "main". '''
         func1(other='other')

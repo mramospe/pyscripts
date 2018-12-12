@@ -22,6 +22,9 @@ def test_dependencies():
     p = subprocess.Popen('python {} dependencies'.format(__script_path__).split())
     assert p.wait() == 0
 
+    p = subprocess.Popen('python {} exceptions'.format(__script_path__).split())
+    assert p.wait() == 0
+
 
 def test_direct_dependencies():
     '''
@@ -31,17 +34,3 @@ def test_direct_dependencies():
     assert p.wait() == 0
 
 
-def test_run_once():
-    '''
-    Test function for the "run_once" decorator.
-    '''
-    @pyscripts.run_once
-    def func():
-        return 1
-
-    # First call will return the output of the function, the second
-    # will return None
-    assert not func.has_run
-    assert func()
-    assert func.has_run
-    assert not func()

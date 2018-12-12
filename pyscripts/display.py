@@ -9,40 +9,17 @@ __email__   = ['miguel.ramos.pernas@cern.ch']
 
 # Python
 import ctypes
-import functools
 import io
 import os
 import sys
 import tempfile
 from contextlib import contextmanager
 
+# Local
+from pyscripts.core import decorate
+
 
 __all__ = ['redirect_stdstream', 'redirecting_stdstream']
-
-
-def decorate( deco ):
-    '''
-    Decorate using the given function, preserving the docstring.
-
-    :param deco: decorator.
-    :type deco: function
-    :returns: function used to decorate.
-    :rtype: function
-    '''
-    def _wrapper( f ):
-        '''
-        Wrap the decorator.
-        '''
-        @functools.wraps(f)
-        def __wrapper( *args, **kwargs ):
-            '''
-            Inner wrapper which actually calls the function.
-            '''
-            return deco(f)(*args, **kwargs)
-
-        return __wrapper
-
-    return _wrapper
 
 
 @decorate(contextmanager)
